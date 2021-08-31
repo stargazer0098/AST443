@@ -112,21 +112,34 @@ day_to_observe = [ ]
 
 for i in range(len(date_obs)):
     
-    if (date_obs[i] < oct8_JD): 
+    while (date_obs[i] < oct8_JD): 
     
-        date_obs[i] = date_obs[i] + period[i] 
-        
-            date_obs[i] = date_obs[i] + period[i] 
-        
-    day_to_observe.append(date_obs[i])
+        date_obs[i] = date_obs[i] + period[i]
+ 
+        if date_obs[i] > today_JD:
+            day_to_observe.append([date_obs[i], planet_name[i]])
 
-print(date_obs)
+#print(date_obs)
 
 print(day_to_observe)
+print(len(day_to_observe))
+print(day_to_observe[0][0])
 
+# what we can observe with transit from september to october 9th ? 
+can_observe = [ ]
+
+count = 0 
+for i in range(len(day_to_observe)):
+    dt = datetime(1858, 11, 17, tzinfo = timezone.utc) + timedelta(day_to_observe[i][0]-dt_Offset)
+    print(dt)
+    can_observe.append([day_to_observe[i][1], str(dt)])
+    count +=1 
+
+print(can_observe, count)
+
+
+    
 #print(dt_list)
-
-
 
 # PLOT 
 # ---- 
