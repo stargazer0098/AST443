@@ -10,32 +10,33 @@ col 0: name of planet
 col 1: planet radius (jupiter radius)
 col 2: orbital period of planet (days)  
 col 3: semimajor axis (AU) 
-col 4: "epoch of periastron" (JD) 
-col 5: impact paramater 
-col 6: name of host star 
-col 7: right ascension (deg) 
-col 8: declination (deg)
-col 9: V-band magnitude (apparent) 
-col 10: star radius (solar radii) 
+col 4: impact paramater 
+col 5: name of host star 
+col 6: right ascension (deg) 
+col 7: declination (deg)
+col 8: V-band magnitude (apparent) 
+col 9: star radius (solar radii) 
+col 10: primary transit (JD) 
 ''' 
 planet_name = np.loadtxt(input_file, dtype = str , skiprows = 1, usecols = 0)
-star_name = np.loadtxt(input_file, dtype = str, skiprows = 1, usecols = 6)
+star_name = np.loadtxt(input_file, dtype = str, skiprows = 1, usecols = 5)
 
 print(planet_name)
 print(star_name)
 
-data = np.loadtxt(input_file, skiprows=1, usecols = (1,2,3,4,5,7,8,9,10))
+data = np.loadtxt(input_file, skiprows=1, usecols = (1,2,3,4,6,7,8,9,10))
 print(np.shape(data))
 
 rad_planet = data[:,0] * 0.10049 # planet radius in [solar radii] 
 period     = data[:,1] * 24      # planet's orbital period in [hours] 
 semi_major = data[:,2] * 215.032 # semi-major axis in [solar radii] 
-epoch_peri = data[:,3]           # "epoch of periastron" in [JD] 
-imp_param  = data[:,4]           # impact parameter 
-right_asc  = data[:,5]           # [deg]
-dec        = data[:,6]           # [deg]
-V_mag      = data[:,7]           # magnitude of star in V-band (apparent)
-rad_star   = data[:,8]           # star radius in [solar radii] 
+imp_param  = data[:,3]           # impact parameter 
+right_asc  = data[:,4]           # [deg]
+dec        = data[:,5]           # [deg]
+V_mag      = data[:,6]           # magnitude of star in V-band (apparent)
+rad_star   = data[:,7]           # star radius in [solar radii] 
+prim_trans = data[:,8]           # [JD] 
+
 #print(planet_name[0], star_name[0], rad_planet[0], period[0], semi_major[0], epoch_peri[0], imp_param[0], right_asc[0], dec[0], V_mag[0], rad_star[0])
 
 transit_depth = (rad_planet/rad_star)**2
@@ -65,11 +66,10 @@ right_asc = right_asc[good]   # [deg]
 dec = dec[good]               # [deg]
 V_mag = V_mag[good]
 rad_star = rad_star[good]     # [solar radii] 
-
+prim_trans = prim_trans[good]
 print(np.shape(data_good)) # print number of candidates left for selection 
 print(np.shape(star_name))
 print(np.shape(planet_name))
-
 
 transit_depth = (rad_planet/rad_star)**2
 
@@ -84,8 +84,8 @@ plt.show()
 # New file with these candidates 
 
 with open('./exoplanet_candidates.txt', 'w+') as file:
-    for planet_name, rad_planet, period, semi_major, imp_param, star_name,  right_asc, dec, V_mag, rad_star in zip(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star): 
-        file.write('{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\n'.format(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star))
+    for planet_name, rad_planet, period, semi_major, imp_param, star_name,  right_asc, dec, V_mag, rad_star, prim_trans in zip(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star, prim_trans): 
+        file.write('{:15}\t{:15}\t{:15}\t{:15}\t{:15}\t{:15}\t{:15}\t{:15}\t{:15}\t{:15}\n'.format(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star, prim_trans))
 
 file.close() 
 
