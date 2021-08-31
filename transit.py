@@ -1,5 +1,6 @@
 import numpy as np  
 import matplotlib.pyplot as plt 
+from datetime import datetime, timedelta, timezone 
 
 input_file = 'exoplanets_all_list.txt'
 
@@ -28,7 +29,7 @@ data = np.loadtxt(input_file, skiprows=1, usecols = (1,2,3,4,6,7,8,9,10))
 print(np.shape(data))
 
 rad_planet = data[:,0] * 0.10049 # planet radius in [solar radii] 
-period     = data[:,1] * 24      # planet's orbital period in [hours] 
+period     = data[:,1]           # planet's orbital period in [days]
 semi_major = data[:,2] * 215.032 # semi-major axis in [solar radii] 
 imp_param  = data[:,3]           # impact parameter 
 right_asc  = data[:,4]           # [deg]
@@ -59,7 +60,7 @@ data_good = data[good]
 star_name = star_name[good]
 planet_name = planet_name[good] 
 rad_planet = rad_planet[good] # [solar radii]
-period = period[good]         # [hours] 
+period = period[good]         # [days]
 semi_major = semi_major[good] # [solar radii]
 imp_param = imp_param[good]
 right_asc = right_asc[good]   # [deg]
@@ -72,13 +73,66 @@ print(np.shape(star_name))
 print(np.shape(planet_name))
 
 transit_depth = (rad_planet/rad_star)**2
-
+print(prim_trans)
 print(V_mag)
+
+# Primary transit in JD represents when the planet is right in front of star (middle of its transit)
+# so, if we keep adding periods (days) to the primary transit (JD) we basically would get times for when the planet is at the midpoint of its transit
+ 
+planet = np.where(planet_name == 'HD189733b')
+print(prim_trans[planet])
+
+dt_Offset = 2400000.5 # offset between JD and MJD (modern julian date), starts at 11-17-1858
+
+modified_julian_date = prim_trans - dt_Offset
+dt_list = [ ]
+print(modified_julian_date)
+
+good = np.where(~np.isnan(modified_julian_date))  # only take indices where MDJ is not a nan 
+print(good)
+print(modified_julian_date[good])
+
+modified_julian_date = modified_julian_date[good] 
+
+# New York is 4 hours behind UTC time 
+
+# today's julian day, i.e. august 31, 2021 is 2459458 JD (Wikipedia for Julian Day) 
+today_JD = 2459458 # JD for august 31, 2021 
+# 8/31/21 to october 8th is 38 so, iterate T0 + period until 2459458 
+
+oct8_JD = today_JD + 38 
+
+for i in range(len(modified_julian_date)):
+   
+    dt = datetime(1858, 11, 17, tzinfo = timezone.utc) + timedelta(modified_julian_date[i])
+    #print(dt.date()) # get only the dates 
+
+date_obs = prim_trans + period # in JD  
+day_to_observe = [ ] 
+
+for i in range(len(date_obs)):
+    
+    if (date_obs[i] < oct8_JD): 
+    
+        date_obs[i] = date_obs[i] + period[i] 
+        
+            date_obs[i] = date_obs[i] + period[i] 
+        
+    day_to_observe.append(date_obs[i])
+
+print(date_obs)
+
+print(day_to_observe)
+
+#print(dt_list)
+
+
 
 # PLOT 
 # ---- 
-plt.plot(V_mag, transit_depth, '+')
-plt.show()
+
+#plt.plot(V_mag, transit_depth, '+')
+#plt.show()
 
 
 # New file with these candidates 
