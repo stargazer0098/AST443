@@ -51,7 +51,7 @@ ra_min  = 1 # [hour] i.e. 1AM
 
 # Initial limitations for selecting candidates by magnitude, declination, right ascension 
 
-good = np.where( (V_mag < 12.5) & (dec < dec_max) & (dec > dec_min) & (right_asc > 15) &  (right_asc >ra_max*15) | (right_asc < ra_min * 15) )
+good = np.where( (V_mag < 12) & (dec < dec_max) & (dec > dec_min) & (right_asc > 15) & ( (right_asc >ra_max*15) | (right_asc < ra_min * 15) ) )
 data_good = data[good] 
 
 # good data now: 
@@ -71,10 +71,18 @@ print(np.shape(star_name))
 print(np.shape(planet_name))
 
 # New file with these candidates 
+'''
 with open('./exoplanet_candidates.txt', 'w+') as file:
     for planet_name, rad_planet, period, semi_major, imp_param, star_name,  right_asc, dec, V_mag, rad_star in zip(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star): 
         file.write('{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\n'.format(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star))
 
 file.close() 
-   
+''' 
 
+transit_depth = (rad_planet/rad_star)**2
+
+print(V_mag)
+
+plt.plot(V_mag, transit_depth, '+')
+plt.show()
+ 
