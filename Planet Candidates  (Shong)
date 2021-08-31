@@ -1,0 +1,11 @@
+Planet Name, Radius (R_jupiter), RA (deg), Dec (deg), Host star magnitude (m_v), period (days), Transit Duration (min), Transit Depth
+
+1. WASP-48 b, 1.67 Rj, 291:16, 55:47, 11.06 m_v, 2.144 days, 127.4 min, 0.009
+2. KOI-13 b, 1.512 Rj, 286:97, 46:87, 10 m_v, 1.764 days, 98.52 min, 0.0075
+3. WASP-3 b, 1.454 Rj, 278:63, 35:66, 10.64 m_v, 1.847 days, 92.59 min, 0.012
+4. WASP-58 b, 1.37 Rj, 274:70, 45:17, 11.66 m_v, 5.017 days, 124.9 min, 0.014
+5. HD 189733 b, 1.138 Rj, 300:18, 22.71, 7.67 m_v, 2.219 days, 70.6 min, 0.02
+6. TrES-2 A b, 1.189 Rj, 286:81, 49:32, 11.41 m_v, 2.471 days, 81.35 min, 0.013
+
+
+The duration approximately violently so might be change 
