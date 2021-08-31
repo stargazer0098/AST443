@@ -83,6 +83,8 @@ transit_depth = (rad_planet/rad_star)**2
 
 print(V_mag)
 
+# PLOT
+# ---- 
 plt.plot(V_mag, transit_depth, '+')
 plt.show()
  
