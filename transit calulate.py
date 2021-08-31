@@ -1,4 +1,5 @@
 import math as m
+import numpy as np
 
 b = float(input('enter impact parameter b '))
 P = float(input('enter period (days)'))
@@ -14,9 +15,12 @@ p = 1440.0*P
 A = 215.032*a
 
 
-T_dur = p/m.pi*m.asin(m.sqrt(((Rs+rp)**2-(b*Rs)**2)/A))
+T_dur = (p/m.pi)*m.asin(m.sqrt(((Rs+rp)**2-(b*Rs)**2)/A))
+
+T_duration = (p/np.pi) * np.arcsin( np.sqrt( (Rs + rp)**2 - (b*Rs)**2 ) / A) 
 
 T_dep = (rp/Rs)**2
 
 print('Transit duration is (min):', T_dur)
+print('Amanda's transit duration (min):', T_duration)
 print('Transit dpeth is:', T_dep)
