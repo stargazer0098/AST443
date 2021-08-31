@@ -25,18 +25,40 @@ print(planet_name)
 print(star_name)
 
 data = np.loadtxt(input_file, skiprows=1, usecols = (1,2,3,4,5,7,8,9,10))
+print(np.shape(data))
 
 rad_planet = data[:,0] * 0.10049 # planet radius in [solar radii] 
-period     = data[:,1] * 24      # planet's orbital period in [hours] 
-semi_major = data[:,2] * 215.032 # semi-major axis in [solar radii] 
-epoch_peri = data[:,3]           # "epoch of periastron" in [JD] 
-imp_param  = data[:,4]           # impact parameter 
+#period     = data[:,1] * 24      # planet's orbital period in [hours] 
+#semi_major = data[:,2] * 215.032 # semi-major axis in [solar radii] 
+#epoch_peri = data[:,3]           # "epoch of periastron" in [JD] 
+#imp_param  = data[:,4]           # impact parameter 
 right_asc  = data[:,5]           # [deg]
 dec        = data[:,6]           # [deg]
 V_mag      = data[:,7]           # magnitude of star in V-band (apparent)
 rad_star   = data[:,8]           # star radius in [solar radii] 
-print(planet_name[0], star_name[0], rad_planet[0], period[0], semi_major[0], epoch_peri[0], imp_param[0], right_asc[0], dec[0], V_mag[0], rad_star[0])
+#print(planet_name[0], star_name[0], rad_planet[0], period[0], semi_major[0], epoch_peri[0], imp_param[0], right_asc[0], dec[0], V_mag[0], rad_star[0])
 
 transit_depth = (rad_planet/rad_star)**2
 print(transit_depth[0])
+
+# Range for declination 
+
+dec_min = 21 # [deg]
+dec_max = 61 # [deg]
+
+ra_max  = 19 # [hour] i.e. 7PM 
+ra_min  = 1 # [hour] i.e. 1AM
+
+# Initial limitations for selecting candidates by magnitude, declination, right ascension 
+
+good = np.where( (V_mag < 12.5) & (dec < dec_max) & (dec > dec_min) & (right_asc > 15) &  (right_asc >ra_max*15) | (right_asc < ra_min * 15) )
+data_good = data[good] 
+star_name = star_name[good]
+planet_name = planet_name[good] 
+
+print(np.shape(data_good)) # print number of candidates left for selection 
+print(np.shape(star_name))
+print(np.shape(planet_name))
+
+
 
