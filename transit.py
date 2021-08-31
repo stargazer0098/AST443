@@ -70,21 +70,24 @@ print(np.shape(data_good)) # print number of candidates left for selection
 print(np.shape(star_name))
 print(np.shape(planet_name))
 
-# New file with these candidates 
-'''
-with open('./exoplanet_candidates.txt', 'w+') as file:
-    for planet_name, rad_planet, period, semi_major, imp_param, star_name,  right_asc, dec, V_mag, rad_star in zip(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star): 
-        file.write('{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\n'.format(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star))
-
-file.close() 
-''' 
 
 transit_depth = (rad_planet/rad_star)**2
 
 print(V_mag)
 
-# PLOT
+# PLOT 
 # ---- 
 plt.plot(V_mag, transit_depth, '+')
 plt.show()
+
+
+# New file with these candidates 
+
+with open('./exoplanet_candidates.txt', 'w+') as file:
+    for planet_name, rad_planet, period, semi_major, imp_param, star_name,  right_asc, dec, V_mag, rad_star in zip(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star): 
+        file.write('{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\n'.format(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star))
+
+file.close() 
+
+
  
