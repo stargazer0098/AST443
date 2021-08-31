@@ -28,10 +28,10 @@ data = np.loadtxt(input_file, skiprows=1, usecols = (1,2,3,4,5,7,8,9,10))
 print(np.shape(data))
 
 rad_planet = data[:,0] * 0.10049 # planet radius in [solar radii] 
-#period     = data[:,1] * 24      # planet's orbital period in [hours] 
-#semi_major = data[:,2] * 215.032 # semi-major axis in [solar radii] 
-#epoch_peri = data[:,3]           # "epoch of periastron" in [JD] 
-#imp_param  = data[:,4]           # impact parameter 
+period     = data[:,1] * 24      # planet's orbital period in [hours] 
+semi_major = data[:,2] * 215.032 # semi-major axis in [solar radii] 
+epoch_peri = data[:,3]           # "epoch of periastron" in [JD] 
+imp_param  = data[:,4]           # impact parameter 
 right_asc  = data[:,5]           # [deg]
 dec        = data[:,6]           # [deg]
 V_mag      = data[:,7]           # magnitude of star in V-band (apparent)
@@ -53,12 +53,28 @@ ra_min  = 1 # [hour] i.e. 1AM
 
 good = np.where( (V_mag < 12.5) & (dec < dec_max) & (dec > dec_min) & (right_asc > 15) &  (right_asc >ra_max*15) | (right_asc < ra_min * 15) )
 data_good = data[good] 
+
+# good data now: 
 star_name = star_name[good]
 planet_name = planet_name[good] 
+rad_planet = rad_planet[good] # [solar radii]
+period = period[good]         # [hours] 
+semi_major = semi_major[good] # [solar radii]
+imp_param = imp_param[good]
+right_asc = right_asc[good]   # [deg]
+dec = dec[good]               # [deg]
+V_mag = V_mag[good]
+rad_star = rad_star[good]     # [solar radii] 
 
 print(np.shape(data_good)) # print number of candidates left for selection 
 print(np.shape(star_name))
 print(np.shape(planet_name))
 
+# New file with these candidates 
+with open('./exoplanet_candidates.txt', 'w+') as file:
+    for planet_name, rad_planet, period, semi_major, imp_param, star_name,  right_asc, dec, V_mag, rad_star in zip(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star): 
+        file.write('{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\t{:20}\n'.format(planet_name, rad_planet, period, semi_major, imp_param, star_name, right_asc, dec, V_mag, rad_star))
 
+file.close() 
+   
 
