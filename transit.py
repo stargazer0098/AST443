@@ -56,7 +56,7 @@ ra_min  = 1 # [hour] i.e. 1AM
 good = np.where( (V_mag < 12) & (dec < dec_max) & (dec > dec_min) & (right_asc > 15) & ( (right_asc >ra_max*15) | (right_asc < ra_min * 15) ) )
 data_good = data[good] 
 
-# good data now: 
+# good data now (yields 60 candidates just based on RA, dec, and magnitude limitations): 
 star_name = star_name[good]
 planet_name = planet_name[good] 
 rad_planet = rad_planet[good] # [solar radii]
@@ -73,17 +73,20 @@ print(np.shape(star_name))
 print(np.shape(planet_name))
 
 transit_depth = (rad_planet/rad_star)**2
+transit_duration = (period/np.pi) * np.arcsin(np.sqrt( (rad_star+rad_planet)**2 - (imp_param*rad_star)**2)/semi_major)
+print(transit_duration)
 print(prim_trans)
 print(V_mag)
 
 # Primary transit in JD represents when the planet is right in front of star (middle of its transit)
 # so, if we keep adding periods (days) to the primary transit (JD) we basically would get times for when the planet is at the midpoint of its transit
  
-planet = np.where(planet_name == 'HD189733b')
-print(prim_trans[planet])
-
+planet = np.where(planet_name == 'WASP-48b')
+#print(prim_trans[planet])
+#print(period[planet], rad_star[planet], rad_planet[planet], imp_param[planet], transit_duration[planet])
 dt_Offset = 2400000.5 # offset between JD and MJD (modern julian date), starts at 11-17-1858
 
+''' 
 modified_julian_date = prim_trans - dt_Offset
 dt_list = [ ]
 print(modified_julian_date)
@@ -93,6 +96,7 @@ print(good)
 print(modified_julian_date[good])
 
 modified_julian_date = modified_julian_date[good] 
+''' 
 
 # New York is 4 hours behind UTC time 
 
@@ -102,14 +106,45 @@ today_JD = 2459458 # JD for august 31, 2021
 
 oct8_JD = today_JD + 38 
 
+''' 
 for i in range(len(modified_julian_date)):
    
     dt = datetime(1858, 11, 17, tzinfo = timezone.utc) + timedelta(modified_julian_date[i])
     #print(dt.date()) # get only the dates 
+'''
 
-date_obs = prim_trans + period # in JD  
+# --- Now we want to calculate transit times for the planets --- 
+
+# so take the indices where there is a JD in the catalog, as well as transit depth > 0.008, and transit_duration < 3 hours 
+
+date_obs = prim_trans + period # in JD
+
+# transit_Duration  above was in days, so < 0.125 is  < 3 hours
+ 
+good = np.where(~np.isnan(date_obs) & (transit_depth > 0.008))
+
+# take primary transits only those without nans for their prim_trans + period 
+date_obs = date_obs[good] 
+
+star_name = star_name[good]
+planet_name = planet_name[good]
+rad_planet = rad_planet[good] # [solar radii]                                                          
+period = period[good]         # [days]                                                                 
+semi_major = semi_major[good] # [solar radii]                                                          
+imp_param = imp_param[good]
+right_asc = right_asc[good]   # [deg]                                                                  
+dec = dec[good]               # [deg]                                                                  
+V_mag = V_mag[good]
+rad_star = rad_star[good]     # [solar radii]                                                          
+prim_trans = prim_trans[good]
+
+transit_depth = (rad_planet/rad_star)**2
+transit_duration = (period/np.pi) * np.arcsin(np.sqrt( (rad_star+rad_planet)**2 - (imp_param*rad_star)**2)/semi_major)
+
 day_to_observe = [ ] 
 
+# Run through every primary transit and if it is less than the julian day for october 8th, 2021, 
+# add until it is 
 for i in range(len(date_obs)):
     
     while (date_obs[i] < oct8_JD): 
@@ -121,24 +156,25 @@ for i in range(len(date_obs)):
 
 #print(date_obs)
 
-print(day_to_observe)
+print(day_to_observe) # julian day for transits that we can potentially observe
 print(len(day_to_observe))
 print(day_to_observe[0][0])
 
 # what we can observe with transit from september to october 9th ? 
-can_observe = [ ]
+can_observe = [ ] # have list of name + UTC time 
 
 count = 0 
 for i in range(len(day_to_observe)):
     dt = datetime(1858, 11, 17, tzinfo = timezone.utc) + timedelta(day_to_observe[i][0]-dt_Offset)
     print(dt)
-    can_observe.append([day_to_observe[i][1], str(dt)])
-    count +=1 
+    can_observe.append([day_to_observe[i][1], str(dt), day_to_observe[i][0]]) # can_observe is a list of lists, [[planet name, date]...]
+    count += 1 
 
-print(can_observe, count)
+for i in range(len(can_observe)):
+    print(can_observe[i][0], can_observe[i][1], day_to_observe[i][0]) # prints out planet and the time to observe in UTC
 
 
-    
+
 #print(dt_list)
 
 # PLOT 
